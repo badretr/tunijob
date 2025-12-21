@@ -1,0 +1,42 @@
+{% if jobs.has_other_pages %}
+<div class="mt-8">
+    <nav class="flex justify-center">
+        <ul class="flex items-center space-x-2">
+            {% if jobs.has_previous %}
+            <li>
+                <a href="?page={{ jobs.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                   class="px-3 py-2 rounded-md bg-white text-gray-600 hover:bg-gray-50 border border-gray-200">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in jobs.paginator.page_range %}
+                {% if jobs.number == num %}
+                <li>
+                    <span class="px-3 py-2 rounded-md bg-blue-600 text-white">
+                        {{ num }}
+                    </span>
+                </li>
+                {% else %}
+                <li>
+                    <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                       class="px-3 py-2 rounded-md bg-white text-gray-600 hover:bg-gray-50 border border-gray-200">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if jobs.has_next %}
+            <li>
+                <a href="?page={{ jobs.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                   class="px-3 py-2 rounded-md bg-white text-gray-600 hover:bg-gray-50 border border-gray-200">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %} 

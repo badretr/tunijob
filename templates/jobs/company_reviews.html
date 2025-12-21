@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Fonctionnalité supprimée - TuniJob{% endblock %}
+{% block content %}
+<style>
+    .page-background {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.9)), url("{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}");
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+</style>
+<main class="pt-20 pb-16 page-background">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+      <h1 class="text-2xl font-bold mb-4">Les avis d'entreprise ont été désactivés</h1>
+      <p class="text-gray-600 mb-6">Les pages d'avis et de notation des entreprises ne sont plus disponibles.</p>
+      <a href="{% url 'jobs:company_detail' company.id %}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg">Retour à la société</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
+

@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<style>
+    .page-background {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.9)), url("{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}");
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+</style>
+<section class="pt-24 pb-16 page-background">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 flex flex-col md:flex-row md:items-center gap-8">
+            <div class="flex items-center space-x-6">
+                <img src="{{ request.user.get_profile_picture_url }}"
+                     alt="Avatar"
+                     class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md">
+                <div>
+                    <p class="text-sm text-gray-500">Bienvenue</p>
+                    <h1 class="text-2xl font-bold text-gray-900">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </h1>
+                    <p class="text-sm text-gray-500 mt-1 flex items-center space-x-2">
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full
+                                     {% if request.user.is_employer %}bg-blue-100 text-blue-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                            {% if request.user.is_employer %}Employeur{% elif request.user.is_job_seeker %}Candidat{% else %}Utilisateur{% endif %}
+                        </span>
+                        <span class="text-gray-400">•</span>
+                        <span>{{ request.user.email }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex-1 grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-xs uppercase text-gray-500">Créé le</p>
+                    <p class="text-lg font-semibold text-gray-900">
+                        {{ request.user.date_joined|date:"d F Y" }}
+                    </p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-xs uppercase text-gray-500">Dernière connexion</p>
+                    <p class="text-lg font-semibold text-gray-900">
+                        {{ request.user.last_login|date:"d F Y H:i" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <!-- Profile form -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">Informations du profil</h2>
+                        <p class="text-sm text-gray-500">Mettez à jour vos informations personnelles.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profil</span>
+                    </div>
+                </div>
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="profile">
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        {% for field in user_form %}
+                        <div class="space-y-1 {% if field.field.widget.input_type == 'file' %}md:col-span-2{% endif %}">
+                            <label class="text-sm font-medium text-gray-700" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                            <p class="text-xs text-gray-500">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% if field.errors %}
+                            <p class="text-sm text-red-500">{{ field.errors|striptags }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if detail_form %}
+                    <div class="mt-8 border-t border-gray-200 pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ detail_form_title }}</h3>
+                        <div class="space-y-4">
+                            {% for field in detail_form %}
+                            <div class="space-y-1 {% if field.field.widget.input_type == 'file' %}md:col-span-2{% endif %}">
+                                <label class="text-sm font-medium text-gray-700" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                                {% if field.field.widget.input_type == 'file' %}
+                                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept=".pdf,.doc,.docx"
+                                           class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all">
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                {% if field.help_text %}
+                                <p class="text-xs text-gray-500">{{ field.help_text }}</p>
+                                {% endif %}
+                                {% if field.errors %}
+                                <p class="text-sm text-red-500 mt-1">{{ field.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="pt-4">
+                        <button type="submit"
+                                class="inline-flex items-center justify-center px-6 py-3 rounded-lg text-white font-medium
+                                       bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:from-blue-700 hover:to-purple-700
+                                       transition-all duration-200">
+                            <i class="fas fa-save mr-2"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Password form -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">Sécurité du compte</h2>
+                        <p class="text-sm text-gray-500">Modifiez votre mot de passe régulièrement.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <i class="fas fa-lock"></i>
+                        <span>Sécurité</span>
+                    </div>
+                </div>
+
+                <form method="POST" class="space-y-5">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="password">
+
+                    {% for field in password_form %}
+                    <div>
+                        <label class="text-sm font-medium text-gray-700" for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                        <input type="password"
+                               name="{{ field.name }}"
+                               id="{{ field.id_for_label }}"
+                               class="mt-1 w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all text-sm"
+                               required>
+                        {% if field.errors %}
+                        <p class="text-sm text-red-500 mt-1">{{ field.errors|striptags }}</p>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="pt-2">
+                        <button type="submit"
+                                class="w-full inline-flex items-center justify-center px-6 py-3 rounded-lg text-white font-medium
+                                       bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-lg hover:from-purple-700 hover:to-pink-700
+                                       transition-all duration-200">
+                            <i class="fas fa-key mr-2"></i> Mettre à jour le mot de passe
+                        </button>
+                        <p class="text-xs text-gray-500 mt-3">
+                            Conseil : utilisez un mot de passe unique avec au moins 8 caractères, incluant des chiffres et des caractères spéciaux.
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

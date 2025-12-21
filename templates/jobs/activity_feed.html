@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fil d'activité - TuniJob{% endblock %}
+
+{% block content %}
+<style>
+    .page-background {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.9)), url("{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}");
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+</style>
+<main class="pt-16 page-background">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    <i class="fas fa-history mr-3 text-blue-600"></i>
+                    Fil d'activité
+                </h1>
+            </div>
+
+            <div class="space-y-6">
+                {% for activity in activities %}
+                <div class="border-l-4 border-blue-500 pl-6 py-4 hover:bg-gray-50 rounded-r-lg transition-colors">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ activity.title }}</h3>
+                            {% if activity.description %}
+                            <p class="text-gray-600 mb-2">{{ activity.description }}</p>
+                            {% endif %}
+                            {% if activity.related_job %}
+                            <a href="{% url 'jobs:job_detail' activity.related_job.id %}" 
+                               class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                Voir l'offre <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        <span class="text-sm text-gray-500 ml-4">
+                            il y a {{ activity.created_at|timesince }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-12">
+                    <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
+                    <p class="text-gray-500 text-lg">Aucune activité pour le moment</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+

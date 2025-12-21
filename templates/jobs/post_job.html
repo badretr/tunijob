@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50/50 p-4 sm:p-6 lg:p-8">
+    <div class="w-full max-w-xl bg-white rounded-xl p-8 relative
+                before:absolute before:inset-0 before:-z-10 before:rounded-xl before:p-1
+                before:bg-gradient-to-r before:from-emerald-500 before:via-blue-500 before:to-purple-500
+                before:animate-border-glow
+                after:absolute after:inset-0 after:-z-10 after:rounded-xl after:bg-white">
+        
+        <h2 class="text-3xl font-bold mb-8 text-center
+                   bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 
+                   text-transparent bg-clip-text animate-gradient-x">
+            {% if is_edit %}Modifier l'Offre{% else %}Publier une Nouvelle Offre{% endif %}
+        </h2>
+        
+        {% if is_edit %}
+        <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p class="text-sm text-blue-800">
+                <i class="fas fa-info-circle mr-2"></i>
+                Vous modifiez l'offre: <strong>{{ job.title }}</strong>
+            </p>
+        </div>
+        {% endif %}
+        
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            
+            {% for field in form %}
+            <div class="space-y-1">
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                </label>
+                {% if field.name == 'description' or field.name == 'requirements' %}
+                <textarea name="{{ field.name }}"
+                       id="{{ field.id_for_label }}"
+                       {% if field.field.required %}required{% endif %}
+                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm
+                              focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all
+                              hover:border-blue-400"
+                       rows="4">{{ field.value|default:'' }}</textarea>
+                {% elif field.name == 'category' or field.name == 'job_type' or field.name == 'experience_level' %}
+                <select name="{{ field.name }}"
+                       id="{{ field.id_for_label }}"
+                       {% if field.field.required %}required{% endif %}
+                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm
+                              focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all
+                              hover:border-blue-400">
+                    {% for choice in field.field.choices %}
+                    <option value="{{ choice.0 }}" {% if field.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                       name="{{ field.name }}"
+                       id="{{ field.id_for_label }}"
+                       value="{{ field.value|default:'' }}"
+                       {% if field.field.required %}required{% endif %}
+                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm
+                              focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all
+                              hover:border-blue-400">
+                {% endif %}
+                {% if field.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="flex gap-3">
+                <button type="submit" 
+                        class="flex-1 py-3 px-4 rounded-lg text-white text-sm font-medium
+                               bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500
+                               hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600
+                               transform hover:scale-[1.02] transition-all duration-200">
+                    {% if is_edit %}<i class="fas fa-save mr-2"></i>Enregistrer les modifications{% else %}<i class="fas fa-paper-plane mr-2"></i>Publier l'Offre{% endif %}
+                </button>
+                {% if is_edit %}
+                <a href="{% url 'jobs:job_detail' job.id %}" 
+                   class="px-6 py-3 rounded-lg text-gray-700 text-sm font-medium bg-gray-200 hover:bg-gray-300 transition-colors">
+                    Annuler
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

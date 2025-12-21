@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/30 relative overflow-hidden py-16">
+    <!-- Company Header Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                <!-- Company Logo -->
+                <div class="flex-shrink-0">
+                    {% if company.company_logo %}
+                        <img src="{{ company.company_logo.url }}" 
+                             alt="{{ company.company_name }}" 
+                             class="w-24 h-24 rounded-xl object-cover shadow-lg">
+                    {% else %}
+                        <div class="w-24 h-24 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-building text-blue-400 text-4xl"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Company Info -->
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-3">{{ company.company_name }}</h1>
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                            <i class="fas fa-briefcase mr-2"></i>
+                            {{ active_jobs|length }} Offre{{ active_jobs|length|pluralize }} active{{ active_jobs|length|pluralize }}
+                        </span>
+                        {% if company.company_website %}
+                            <a href="{{ company.company_website }}" 
+                               target="_blank"
+                               class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-50 text-gray-600 hover:bg-gray-100">
+                                <i class="fas fa-globe mr-2"></i> Website
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Details Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Company Info -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- About Section -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">À propos de {{ company.company_name }}</h2>
+                    <div class="prose max-w-none text-gray-600">
+                        {{ company.company_description|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Offres actives -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Offres ouvertes</h2>
+                    <div class="space-y-4">
+                        {% for job in active_jobs %}
+                        <div class="border border-gray-100 rounded-lg p-4 hover:border-blue-200 transition-colors duration-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ job.title }}</h3>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm">
+                                            {{ job.job_type }}
+                                        </span>
+                                        <span class="px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-sm">
+                                            {{ job.location }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'jobs:job_detail' job.id %}" 
+                                   class="inline-flex items-center text-blue-600 hover:text-blue-700">
+                                    Voir les détails
+                                    <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-gray-500 text-center py-4">Aucune offre active pour le moment.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Additional Info -->
+            <div class="space-y-8">
+                <!-- Statistiques de l'entreprise -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Vue d'ensemble</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Offres actives</span>
+                            <span class="font-semibold text-gray-900">{{ active_jobs|length }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Membre depuis</span>
+                            <span class="font-semibold text-gray-900">{{ company.user.date_joined|date:"F Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avis et évaluations: disabled -->
+                <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">Avis</h2>
+                    <p class="text-sm text-gray-600">La fonctionnalité d'avis et de notation a été désactivée.</p>
+                </div>
+
+                <!-- Informations de contact -->
+                {% if company.contact_email or company.contact_phone %}
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Informations de contact</h2>
+                    <div class="space-y-4">
+                        {% if company.contact_email %}
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                            <a href="mailto:{{ company.contact_email }}" class="text-gray-600 hover:text-blue-600">
+                                {{ company.contact_email }}
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if company.contact_phone %}
+                        <div class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-blue-500"></i>
+                            <span class="text-gray-600">{{ company.contact_phone }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

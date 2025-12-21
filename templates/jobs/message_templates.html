@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Message Templates - TuniJob{% endblock %}
+
+{% block content %}
+<style>
+    .page-background {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.9)), url("{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}");
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+</style>
+<main class="pt-16 page-background">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    <i class="fas fa-envelope mr-3 text-blue-600"></i>
+                    Modèles de messages
+                </h1>
+                <button onclick="document.getElementById('templateForm').classList.toggle('hidden')" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Nouveau modèle
+                </button>
+            </div>
+
+            <!-- Template Form -->
+            <div id="templateForm" class="hidden mb-8 p-6 bg-gray-50 rounded-lg">
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nom du modèle *</label>
+                        <input type="text" name="name" required
+                               placeholder="Ex: Réponse standard"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Contenu *</label>
+                        <textarea name="content" rows="6" required
+                                  placeholder="Votre message..."
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is_default" name="is_default" 
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="is_default" class="ml-2 block text-sm text-gray-700">
+                            Définir comme modèle par défaut
+                        </label>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Créer
+                    </button>
+                </form>
+            </div>
+
+            <!-- Templates List -->
+            <div class="space-y-4">
+                {% for template in templates %}
+                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-lg font-semibold text-gray-900">{{ template.name }}</h3>
+                                {% if template.is_default %}
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
+                                    Par défaut
+                                </span>
+                                {% endif %}
+                            </div>
+                            <p class="text-gray-600 whitespace-pre-wrap">{{ template.content }}</p>
+                        </div>
+                        <form method="POST" class="ml-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="template_id" value="{{ template.id }}">
+                            {% if next %}
+                            <input type="hidden" name="next" value="{{ next }}">
+                            {% endif %}
+                            <button type="submit" 
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce modèle?')"
+                                    class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        {% if next %}
+                        <div class="ml-2">
+                            <a href="{{ next }}?template_id={{ template.id }}" class="text-sm text-blue-600 hover:underline">
+                                <i class="fas fa-check mr-1"></i>Utiliser
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="text-xs text-gray-500">
+                        Créé le {{ template.created_at|date:"d/m/Y" }}
+                    </p>
+                </div>
+                {% empty %}
+                <div class="text-center py-12">
+                    <i class="fas fa-envelope-open text-gray-300 text-6xl mb-4"></i>
+                    <p class="text-gray-500 text-lg">Aucun modèle pour le moment</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+

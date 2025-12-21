@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tasks - TuniJob{% endblock %}
+
+{% block content %}
+<style>
+    .page-background {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.9)), url("{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}");
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+</style>
+<main class="pt-16 page-background">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    <i class="fas fa-tasks mr-3 text-blue-600"></i>
+                    Mes tâches
+                </h1>
+                <button id="showTaskFormBtn"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Nouvelle tâche
+                </button>
+            </div>
+
+            <!-- Task Form -->
+            <div id="taskForm" class="hidden mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <form method="POST" action="{% url 'jobs:task_list' %}" class="space-y-4" id="createTaskForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    
+                    <div>
+                        <label for="task_title" class="block text-sm font-medium text-gray-700 mb-2">Titre *</label>
+                        <input type="text" 
+                               id="task_title"
+                               name="title" 
+                               required
+                               placeholder="Ex: Postuler pour le poste de développeur"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label for="task_description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="task_description"
+                                  name="description" 
+                                  rows="3"
+                                  placeholder="Détails supplémentaires..."
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="task_due_date" class="block text-sm font-medium text-gray-700 mb-2">Date d'échéance</label>
+                            <input type="datetime-local" 
+                                   id="task_due_date"
+                                   name="due_date"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label for="task_priority" class="block text-sm font-medium text-gray-700 mb-2">Priorité</label>
+                            <select id="task_priority"
+                                    name="priority" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="low">Basse</option>
+                                <option value="medium" selected>Moyenne</option>
+                                <option value="high">Haute</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="submit" 
+                                class="flex-1 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                            <i class="fas fa-check mr-2"></i>Créer la tâche
+                        </button>
+                        <button type="button" 
+                                onclick="document.getElementById('taskForm').classList.add('hidden'); document.getElementById('createTaskForm').reset();"
+                                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="space-y-4">
+                {% for task in tasks %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow {% if task.is_completed %}bg-gray-50 opacity-75{% endif %}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <form method="POST" class="inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="toggle">
+                                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                                    <button type="submit" class="focus:outline-none">
+                                        <i class="fas fa-{% if task.is_completed %}check-circle text-green-500{% else %}circle text-gray-300{% endif %} text-xl"></i>
+                                    </button>
+                                </form>
+                                <h3 class="text-lg font-semibold {% if task.is_completed %}line-through text-gray-500{% else %}text-gray-900{% endif %}">
+                                    {{ task.title }}
+                                </h3>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                    {% if task.priority == 'high' %}bg-red-100 text-red-800
+                                    {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-800
+                                    {% else %}bg-green-100 text-green-800{% endif %}">
+                                    {{ task.get_priority_display }}
+                                </span>
+                            </div>
+                            {% if task.description %}
+                            <p class="text-gray-600 text-sm mb-2">{{ task.description }}</p>
+                            {% endif %}
+                            {% if task.due_date %}
+                            <p class="text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                Échéance: {{ task.due_date|date:"d/m/Y H:i" }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <form method="POST" class="ml-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                            <button type="submit" 
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche?')"
+                                    class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-12">
+                    <i class="fas fa-tasks text-gray-300 text-6xl mb-4"></i>
+                    <p class="text-gray-500 text-lg">Aucune tâche pour le moment</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const taskForm = document.getElementById('taskForm');
+    const createTaskForm = document.getElementById('createTaskForm');
+    const showFormBtn = document.getElementById('showTaskFormBtn');
+    
+    // Show/hide form button handler
+    if (showFormBtn && taskForm) {
+        showFormBtn.addEventListener('click', function() {
+            taskForm.classList.toggle('hidden');
+            if (!taskForm.classList.contains('hidden')) {
+                const titleInput = document.getElementById('task_title');
+                if (titleInput) {
+                    titleInput.focus();
+                }
+            }
+        });
+    }
+    
+    // Handle form submission
+    if (createTaskForm) {
+        createTaskForm.addEventListener('submit', function(e) {
+            const titleInput = document.getElementById('task_title');
+            if (titleInput && !titleInput.value.trim()) {
+                e.preventDefault();
+                alert('Veuillez entrer un titre pour la tâche.');
+                titleInput.focus();
+                return false;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

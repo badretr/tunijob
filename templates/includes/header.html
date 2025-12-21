@@ -1,0 +1,273 @@
+{% load static %}
+<header class="fixed w-full top-0 bg-white/90 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center">
+                <a href="{% url 'jobs:home' %}" class="flex items-center space-x-2">
+                    <!-- Briefcase icon for logo -->
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span class="text-2xl font-bold text-gray-900">TuniJob</span>
+                </a>
+            </div>
+
+            <!-- Mobile Toggle Button -->
+            <button class="md:hidden block text-gray-600 hover:text-blue-600 focus:outline-none" id="mobile-menu-btn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-4" id="mobile-menu">
+                <a href="{% url 'jobs:home' %}" 
+                   class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                    <!-- Home icon -->
+                    <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Accueil
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                </a>
+
+                <a href="{% url 'jobs:job_list' %}" 
+                   class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                    <!-- Search icon -->
+                    <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Trouver un Emploi
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                </a>
+
+                {% if user.is_authenticated %}
+                    {% if user.is_employer %}
+                        <a href="{% url 'jobs:post_job' %}" 
+                           class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                            <!-- Add job icon -->
+                            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Publier une Offre
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                        </a>
+                        <a href="{% url 'jobs:chat_list' %}" 
+                           class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                            <!-- Chat icon -->
+                            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            Messages
+                            {% if has_unread_messages %}
+                            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                                {% if unread_messages_count > 9 %}9+{% else %}{{ unread_messages_count }}{% endif %}
+                            </span>
+                            {% endif %}
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                        </a>
+                        <a href="{% url 'dashboard:employer_dashboard' %}" 
+                           class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                            <!-- Dashboard icon -->
+                            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                            </svg>
+                            Tableau de Bord
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                        </a>
+                    {% elif user.is_job_seeker %}
+                        <a href="{% url 'jobs:chat_list' %}" 
+                           class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                            <!-- Chat icon -->
+                            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            Messages
+                            {% if has_unread_messages %}
+                            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                                {% if unread_messages_count > 9 %}9+{% else %}{{ unread_messages_count }}{% endif %}
+                            </span>
+                            {% endif %}
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                        </a>
+                        <!-- Resume builder removed: 'Mes CVs' link intentionally deleted -->
+                        <a href="{% url 'dashboard:jobseeker_dashboard' %}"
+                           class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                            <!-- User dashboard icon -->
+                            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Tableau de Bord
+                            {% if has_unread_notifications %}
+                            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                                {% if unread_notifications_count > 9 %}9+{% else %}{{ unread_notifications_count }}{% endif %}
+                            </span>
+                            {% endif %}
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                        </a>
+                    {% endif %}
+
+                    <!-- Desktop profile menu -->
+                    <div class="hidden md:flex items-center relative" data-no-clone="true">
+                        <button id="user-menu-button"
+                                class="relative flex items-center space-x-3 rounded-full border border-gray-200 px-3 py-1.5 shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
+                            {% if has_unread_notifications %}
+                            <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[0.6rem] font-bold text-white bg-red-500 rounded-full animate-pulse">
+                                {% if unread_notifications_count > 9 %}9+{% else %}{{ unread_notifications_count }}{% endif %}
+                            </span>
+                            {% endif %}
+                            <img src="{{ user.get_profile_picture_url }}" alt="Avatar"
+                                 class="w-9 h-9 rounded-full object-cover border border-white shadow">
+                            <div class="text-left">
+                                <p class="text-xs text-gray-500">Mon compte</p>
+                                <p class="text-sm font-semibold text-gray-900">
+                                    {{ user.get_full_name|default:user.username|truncatechars:18 }}
+                                </p>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="user-menu-dropdown"
+                             class="hidden absolute right-0 top-14 w-64 bg-white border border-gray-100 rounded-xl shadow-2xl overflow-hidden z-50">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    {{ user.get_full_name|default:user.username }}
+                                </p>
+                                <p class="text-xs text-gray-500">{{ user.email }}</p>
+                            </div>
+                            <div class="py-2 text-sm text-gray-600">
+                                <a href="{% url 'accounts:profile' %}" class="flex items-center px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-user-circle w-4 mr-3 text-blue-500"></i> Mon Profil
+                                </a>
+                                <a href="{% url 'jobs:activity_feed' %}" class="flex items-center px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-history w-4 mr-3 text-purple-500"></i> Fil d'activité
+                                </a>
+                                <a href="{% url 'jobs:analytics_dashboard' %}" class="flex items-center px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-chart-line w-4 mr-3 text-green-500"></i> Statistiques
+                                </a>
+                                {% if user.is_job_seeker %}
+                                <a href="{% url 'jobs:task_list' %}" class="flex items-center px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-tasks w-4 mr-3 text-orange-500"></i> Mes tâches
+                                </a>
+                                {% endif %}
+                                {% if user.is_employer %}
+                                <a href="{% url 'jobs:task_list' %}" class="flex items-center px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-tasks w-4 mr-3 text-orange-500"></i> Tâches
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'jobs:interview_list' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 relative">
+                                    <i class="fas fa-calendar-check w-4 mr-3 text-indigo-500"></i> Entretiens
+                                    {% if has_unread_interview_notifications %}
+                                    <span class="absolute left-6 top-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                                        {% if unread_interview_notifications_count > 9 %}9+{% else %}{{ unread_interview_notifications_count }}{% endif %}
+                                    </span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'jobs:message_templates' %}" class="flex items-center px-4 py-2 hover:bg-gray-50">
+                                    <i class="fas fa-envelope w-4 mr-3 text-pink-500"></i> Modèles de messages
+                                </a>
+                                <a href="{% url 'accounts:logout' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 border-t border-gray-100 mt-2 pt-2">
+                                    <i class="fas fa-sign-out-alt w-4 mr-3 text-gray-500"></i> Déconnexion
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile profile shortcuts -->
+                          <a href="{% url 'accounts:profile' %}" 
+                       class="md:hidden relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition group">
+                        <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"/>
+                        </svg>
+                        Mon Profil
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition"></span>
+                    </a>
+                    <a href="{% url 'accounts:logout' %}" 
+                       class="md:hidden relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition group">
+                        <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Déconnexion
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition"></span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" 
+                       class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                        <!-- Login icon -->
+                        <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                        </svg>
+                        Connexion
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                    </a>
+                    <a href="{% url 'accounts:signup' %}" 
+                       class="relative flex items-center text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-300 group">
+                        <!-- Sign up icon -->
+                        <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                        </svg>
+                        S'inscrire
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div class="hidden md:hidden flex-col w-full pb-4" id="mobile-menu-items">
+            <!-- Your existing links will be cloned here for mobile -->
+        </div>
+    </nav>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenuItems = document.getElementById('mobile-menu-items');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenuItems.classList.toggle('hidden');
+            // Clone desktop menu items for mobile if not already done
+            if (mobileMenuItems.children.length === 0) {
+                const desktopLinks = document.getElementById('mobile-menu').children;
+                Array.from(desktopLinks).forEach(link => {
+                    if (link.dataset.noClone === 'true') {
+                        return;
+                    }
+                    const clone = link.cloneNode(true);
+                    clone.classList.add('block', 'py-2', 'px-4', 'text-gray-600', 'hover:bg-gray-100');
+                    mobileMenuItems.appendChild(clone);
+                });
+            }
+        });
+
+        const userMenuBtn = document.getElementById('user-menu-button');
+        const userMenuDropdown = document.getElementById('user-menu-dropdown');
+        if (userMenuBtn && userMenuDropdown) {
+            userMenuBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                userMenuDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!userMenuDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>

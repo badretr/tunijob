@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chat - {{ application.job.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    main.chat-detail-page {
+        background: linear-gradient(rgba(249, 250, 251, 0.90), rgba(240, 246, 255, 0.93)), url('{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}');
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .message-container {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    .message-bubble {
+        max-width: 70%;
+        word-wrap: break-word;
+    }
+    .message-sent {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin-left: auto;
+        border-radius: 18px 18px 4px 18px;
+    }
+    .message-received {
+        background: #f3f4f6;
+        color: #1f2937;
+        margin-right: auto;
+        border-radius: 18px 18px 18px 4px;
+    }
+    .message-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .message-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    .message-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+    .message-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="pt-16 bg-transparent min-h-screen chat-detail-page">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-xl shadow-lg flex flex-col" style="height: calc(100vh - 200px);">
+            <!-- Chat Header -->
+            <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="{% url 'jobs:chat_list' %}" class="text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-arrow-left text-xl"></i>
+                        </a>
+                        <img src="{% if user.is_employer %}{{ other_user.get_profile_picture_url }}{% else %}{{ application.job.employer.user.get_profile_picture_url }}{% endif %}" 
+                             alt="Avatar" 
+                             class="w-10 h-10 rounded-full object-cover border-2 border-white">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900">
+                                {% if user.is_employer %}
+                                    {{ other_user.get_full_name|default:other_user.username }}
+                                {% else %}
+                                    {{ application.job.employer.company_name }}
+                                {% endif %}
+                            </h2>
+                            <p class="text-sm text-gray-600">{{ application.job.title }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        {% if user.is_employer %}
+                        <a href="{% url 'jobs:schedule_interview' application.id %}" 
+                           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                            <i class="fas fa-calendar-plus mr-2"></i>Programmer un entretien
+                        </a>
+                        {% endif %}
+                        <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                            Candidature Acceptée
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="message-container flex-1 p-6 space-y-4 overflow-y-auto">
+                {% if chat_messages %}
+                    {% for message in chat_messages %}
+                    <div class="flex {% if message.sender == user %}justify-end{% else %}justify-start{% endif %} items-end space-x-2">
+                        {% if message.sender != user %}
+                        <img src="{{ message.sender.get_profile_picture_url }}" 
+                             alt="Avatar" 
+                             class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                        {% endif %}
+                        <div class="message-bubble message-{% if message.sender == user %}sent{% else %}received{% endif %} px-4 py-3">
+                            <div class="flex items-start space-x-2">
+                                <div class="flex-1">
+                                    <p class="text-sm {% if message.sender == user %}text-white{% else %}text-gray-800{% endif %}">
+                                        {{ message.content|linebreaks }}
+                                    </p>
+                                    {% if message.attachment %}
+                                    <div class="mt-2">
+                                        {% with url=message.attachment.url|lower %}
+                                            {% if url|slice:"-4:" == ".png" or url|slice:"-4:" == ".jpg" or url|slice:"-4:" == ".gif" or url|slice:"-5:" == ".jpeg" or url|slice:"-5:" == ".webp" %}
+                                                <a href="{{ message.attachment.url }}" target="_blank">
+                                                    <img src="{{ message.attachment.url }}" alt="attachment" class="max-w-xs rounded-md border" />
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ message.attachment.url }}" target="_blank" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                                                    <i class="fas fa-file"></i> Télécharger le fichier
+                                                </a>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                    {% endif %}
+                                    <p class="text-xs mt-1 {% if message.sender == user %}text-purple-100{% else %}text-gray-500{% endif %}">
+                                        {{ message.created_at|date:"d/m/Y H:i" }}
+                                        {% if message.sender == user and message.is_read %}
+                                        <i class="fas fa-check-double ml-1"></i>
+                                        {% elif message.sender == user %}
+                                        <i class="fas fa-check ml-1"></i>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% if message.sender == user %}
+                        <img src="{{ message.sender.get_profile_picture_url }}" 
+                             alt="Avatar" 
+                             class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-12">
+                        <i class="fas fa-comments text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Aucun message pour le moment. Commencez la conversation !</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Message Input Form -->
+            <form method="POST" enctype="multipart/form-data" class="p-6 border-t border-gray-200 bg-gray-50" id="chat-form">
+                {% csrf_token %}
+                <div class="mb-2 flex justify-end">
+                    <a href="{% url 'jobs:message_templates' %}?next={{ request.path }}" 
+                       class="text-xs text-blue-600 hover:text-blue-700">
+                        <i class="fas fa-file-alt mr-1"></i>Utiliser un modèle
+                    </a>
+                </div>
+                <div class="flex space-x-3">
+                    <textarea name="content" 
+                              id="message-input"
+                              rows="2" 
+                              placeholder="Tapez votre message..."
+                              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none">{{ prefill_message }}</textarea>
+                    <div class="flex flex-col gap-2">
+                        <button type="button" id="attach-btn" title="Joindre un fichier" 
+                                class="px-3 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input type="file" name="attachment" id="attachment-input" accept="image/*,application/pdf" class="hidden" />
+                        <button type="submit" 
+                                class="px-3 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+// Auto-scroll to bottom on load
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.message-container');
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    // Auto-focus message input
+    const messageInput = document.getElementById('message-input');
+    if (messageInput) {
+        messageInput.focus();
+    }
+});
+
+// Auto-scroll after form submission
+const form = document.getElementById('chat-form');
+if (form) {
+    form.addEventListener('submit', function() {
+        setTimeout(function() {
+            const container = document.querySelector('.message-container');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }, 100);
+    });
+}
+
+// Enter to send, Shift+Enter for newline
+const messageInput = document.getElementById('message-input');
+if (messageInput) {
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.submit();
+        }
+    });
+}
+
+// Attach button functionality
+const attachBtn = document.getElementById('attach-btn');
+const fileInput = document.getElementById('attachment-input');
+if (attachBtn && fileInput) {
+    attachBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const type = file.type || '';
+            
+            // Validate
+            if (file.size > maxSize) {
+                alert('Fichier trop volumineux (max 10MB).');
+                fileInput.value = '';
+                return;
+            }
+            
+            if (!(type.startsWith('image/') || type === 'application/pdf')) {
+                alert('Type non autorisé. Autorisé: images et PDF.');
+                fileInput.value = '';
+                return;
+            }
+        }
+    });
+}
+</script>
+{% endblock %}
+

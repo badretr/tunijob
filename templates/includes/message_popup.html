@@ -1,0 +1,120 @@
+{% if user.is_authenticated %}
+<div id="message-popup" class="fixed bottom-4 right-4 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-4 max-w-sm w-full animate-slide-up">
+        <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+                <img id="popup-sender-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover">
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-900" id="popup-sender-name"></p>
+                <p class="text-sm text-gray-600 mt-1 truncate" id="popup-message-content"></p>
+                <p class="text-xs text-gray-400 mt-1" id="popup-message-time"></p>
+            </div>
+            <button onclick="closeMessagePopup()" class="flex-shrink-0 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mt-3 flex justify-end">
+            <a id="popup-view-link" href="#" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                Voir le message <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes slide-up {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+}
+</style>
+
+<script>
+let messageCheckInterval;
+let lastMessageId = null;
+
+function showMessagePopup(messageData) {
+    const popup = document.getElementById('message-popup');
+    const senderName = document.getElementById('popup-sender-name');
+    const messageContent = document.getElementById('popup-message-content');
+    const messageTime = document.getElementById('popup-message-time');
+    const senderAvatar = document.getElementById('popup-sender-avatar');
+    const viewLink = document.getElementById('popup-view-link');
+    
+    // Set popup content
+    senderName.textContent = messageData.sender_name;
+    messageContent.textContent = messageData.content;
+    messageTime.textContent = 'Maintenant';
+    senderAvatar.src = messageData.sender_avatar;
+    viewLink.href = messageData.view_url;
+    
+    // Show popup
+    popup.classList.remove('hidden');
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        closeMessagePopup();
+    }, 5000);
+}
+
+function closeMessagePopup() {
+    const popup = document.getElementById('message-popup');
+    popup.classList.add('hidden');
+}
+
+function checkForNewMessages() {
+    fetch('{% url "jobs:check_new_messages" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.has_new_message && data.message) {
+                // Only show if it's a different message
+                if (data.message.id !== lastMessageId) {
+                    lastMessageId = data.message.id;
+                    showMessagePopup({
+                        sender_name: data.message.sender_name,
+                        content: data.message.content,
+                        sender_avatar: data.message.sender_avatar,
+                        view_url: data.message.view_url
+                    });
+                }
+            }
+        })
+        .catch(error => console.error('Error checking messages:', error));
+}
+
+// Start checking for new messages every 10 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    // Only check if user is authenticated
+    {% if user.is_authenticated %}
+    messageCheckInterval = setInterval(checkForNewMessages, 10000);
+    // Check immediately on page load
+    checkForNewMessages();
+    {% endif %}
+});
+
+// Stop checking when page is hidden
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        if (messageCheckInterval) {
+            clearInterval(messageCheckInterval);
+        }
+    } else {
+        {% if user.is_authenticated %}
+        messageCheckInterval = setInterval(checkForNewMessages, 10000);
+        checkForNewMessages();
+        {% endif %}
+    }
+});
+</script>
+{% endif %}
+

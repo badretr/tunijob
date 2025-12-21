@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tableau de bord - Recruteur | TuniJob{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.9)), url("{% static 'images/success-business-career-seamless-pattern-600nw-2380651105.webp' %}");
+        background-size: 600px 600px;
+        background-repeat: repeat;
+        background-position: center;
+        filter: blur(0.3px);
+        opacity: 1;
+    }
+</style>
+
+<div class="dashboard-background"></div>
+
+<main class="pt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-custom/10 text-custom">
+                        <i class="fas fa-briefcase text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-500">Offres Publiées</p>
+                        <p class="text-2xl font-semibold">{{ total_jobs }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-gray-100 text-gray-600">
+                        <i class="fas fa-users text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-500">Total</p>
+                        <p class="text-2xl font-semibold">{{ total_applications }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-clock text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-500">En Attente</p>
+                        <p class="text-2xl font-semibold">{{ pending_applications }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-eye text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-500">En Révision</p>
+                        <p class="text-2xl font-semibold">{{ reviewing_applications }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-check-circle text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Acceptées</p>
+                            <p class="text-2xl font-semibold">{{ accepted_applications }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'jobs:post_job' %}" class="bg-custom text-white px-4 py-2 rounded-md hover:bg-custom-dark text-sm">
+                        Publier
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rejected Applications Stat -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow p-6 inline-block">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100 text-red-600">
+                        <i class="fas fa-times-circle text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-500">Refusées</p>
+                        <p class="text-2xl font-semibold">{{ rejected_applications }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entretiens à venir -->
+        <section class="mb-10" id="interviews-section">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">Entretiens à venir</h2>
+                        <p class="text-sm text-gray-500">{{ scheduled_interviews_count }} entretien(s) planifié(s)</p>
+                    </div>
+                </div>
+                <a href="{% url 'jobs:interview_list' %}" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">Voir tout</a>
+            </div>
+
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poste</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidat</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Heure</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for interview in upcoming_interviews %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ interview.application.job.title }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ interview.application.job_seeker.user.get_full_name|default:interview.application.job_seeker.user.username }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ interview.scheduled_at|date:"d/m/Y H:i" }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">{{ interview.get_interview_type_display }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {% if interview.status == 'scheduled' %}bg-yellow-100 text-yellow-800
+                                        {% elif interview.status == 'rescheduled' %}bg-blue-100 text-blue-800
+                                        {% elif interview.status == 'completed' %}bg-green-100 text-green-800
+                                        {% else %}bg-red-100 text-red-800{% endif %}">
+                                        {{ interview.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                                    <a href="{% url 'jobs:edit_interview' interview.id %}" class="text-indigo-600 hover:text-indigo-900">Modifier</a>
+                                                {% if interview.status == 'scheduled' or interview.status == 'rescheduled' %}
+                                    <a href="{% url 'jobs:cancel_interview' interview.id %}"
+                                       class="text-red-600 hover:text-red-900"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir annuler cet entretien ?');">Annuler</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">Aucun entretien à venir.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Posted Jobs -->
+        <div class="bg-white rounded-lg shadow mb-8">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold">Mes Offres Publiées</h2>
+                <a href="{% url 'jobs:post_job' %}" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                    <i class="fas fa-plus mr-2"></i>Nouvelle Offre
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Localisation</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidatures</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for job in posted_jobs %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">
+                                    <a href="{% url 'jobs:job_detail' job.id %}" class="hover:text-blue-600">
+                                        {{ job.title }}
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">{{ job.location }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">{{ job.get_job_type_display }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ job.applications.count }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if job.is_active %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {% if job.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex gap-2">
+                                    <a href="{% url 'jobs:edit_job' job.id %}" 
+                                       class="text-blue-600 hover:text-blue-900" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'jobs:toggle_job_status' job.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" 
+                                                class="text-{% if job.is_active %}yellow{% else %}green{% endif %}-600 hover:text-{% if job.is_active %}yellow{% else %}green{% endif %}-900"
+                                                title="{% if job.is_active %}Désactiver{% else %}Activer{% endif %}">
+                                            <i class="fas fa-{% if job.is_active %}pause{% else %}play{% endif %}"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{% url 'jobs:delete_job' job.id %}" class="inline"
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre?');">
+                                        {% csrf_token %}
+                                        <button type="submit" 
+                                                class="text-red-600 hover:text-red-900" title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                <i class="fas fa-briefcase text-4xl mb-4 text-gray-300"></i>
+                                <p>Aucune offre publiée pour le moment</p>
+                                <a href="{% url 'jobs:post_job' %}" 
+                                   class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                    Publier votre première offre
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if total_jobs > 5 %}
+            <div class="p-6 border-t border-gray-200 text-center">
+                <a href="{% url 'jobs:job_list' %}" 
+                   class="inline-block px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-right mr-2"></i>Voir plus ({{ total_jobs }} offres au total)
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Applications Section -->
+        <div class="bg-white rounded-lg shadow" id="applications-section">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold flex items-center">
+                    Toutes les Candidatures
+                    {% if unread_new_applications > 0 %}
+                    <span class="ml-3 flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                        {{ unread_new_applications }}
+                    </span>
+                    {% endif %}
+                </h2>
+                <!-- Status Filter Tabs -->
+                <div class="flex space-x-2">
+                    <a href="?status=all" 
+                       class="px-4 py-2 rounded-md text-sm font-medium {% if status_filter == 'all' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                        Toutes
+                    </a>
+                    <a href="?status=pending" 
+                       class="px-4 py-2 rounded-md text-sm font-medium {% if status_filter == 'pending' %}bg-yellow-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                        En Attente
+                    </a>
+                    <a href="?status=reviewing" 
+                       class="px-4 py-2 rounded-md text-sm font-medium {% if status_filter == 'reviewing' %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                        En Révision
+                    </a>
+                    <a href="?status=accepted" 
+                       class="px-4 py-2 rounded-md text-sm font-medium {% if status_filter == 'accepted' %}bg-green-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                        Acceptées
+                    </a>
+                    <a href="?status=rejected" 
+                       class="px-4 py-2 rounded-md text-sm font-medium {% if status_filter == 'rejected' %}bg-red-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                        Refusées
+                    </a>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Candidat
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Poste
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date de Candidature
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                CV
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Action
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Chat
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for application in applications %}
+                        <tr class="{% if application.id in unread_new_application_ids %}bg-blue-50 border-l-4 border-blue-500{% endif %}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {% if application.job_seeker.user.get_full_name %}
+                                            {{ application.job_seeker.user.get_full_name }}
+                                        {% else %}
+                                            {{ application.job_seeker.user.username }}
+                                        {% endif %}
+                                    </div>
+                                    {% if application.id in unread_new_application_ids %}
+                                    <span class="flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse" title="Nouvelle candidature">
+                                        !
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ application.job.title }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">
+                                    {{ application.applied_date|date:"M d, Y" }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif application.status == 'reviewing' %}bg-blue-100 text-blue-800
+                                    {% elif application.status == 'accepted' %}bg-green-100 text-green-800
+                                    {% elif application.status == 'rejected' %}bg-red-100 text-red-800
+                                    {% endif %}">
+                                    {% if application.status == 'pending' %}En Attente
+                                    {% elif application.status == 'reviewing' %}En Révision
+                                    {% elif application.status == 'accepted' %}Acceptée
+                                    {% elif application.status == 'rejected' %}Refusée
+                                    {% else %}{{ application.status|title }}{% endif %}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {% if application.job_seeker.resume %}
+                                <a href="{{ application.job_seeker.resume.url }}" target="_blank" rel="noopener" 
+                                   class="inline-flex items-center text-sm text-blue-600 hover:underline">
+                                    <i class="fas fa-file-pdf mr-2 text-red-600"></i>
+                                    Télécharger le CV
+                                </a>
+                                {% else %}
+                                <span class="text-gray-400 text-xs italic">Aucun CV téléchargé</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center gap-2">
+                                    <form method="POST" action="{% url 'dashboard:manage_application' application.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <select name="status" onchange="this.form.submit()" class="text-sm border-gray-300 rounded-md">
+                                            {% for value, label in application.STATUS_CHOICES %}
+                                            <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                    {# Candidate review link removed #}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {% if application.status == 'accepted' %}
+                                    <a href="{% url 'jobs:chat_detail' application.id %}" 
+                                       class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-colors">
+                                        <i class="fas fa-comments mr-1.5"></i>
+                                        Chat
+                                    </a>
+                                {% else %}
+                                    <span class="text-gray-400 text-xs italic">Non disponible</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                Aucune candidature pour le moment
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %} 

@@ -1,0 +1,713 @@
+{% extends 'base.html' %}
+{% block title %}Fonctionnalité supprimée - TuniJob{% endblock %}
+{% block content %}
+<main class="pt-20 pb-16 bg-gray-50 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+      <h1 class="text-2xl font-bold mb-4">La fonctionnalité de création de CV a été supprimée</h1>
+      <p class="text-gray-600 mb-6">L'option de construire un CV a été retirée. Si vous aviez des CV existants, contactez l'administrateur pour assistance.</p>
+      <a href="{% url 'dashboard:jobseeker_dashboard' %}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg">Retour au tableau de bord</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.company.label }}</label>
+                                    <input type="text" name="{{ form.company.name }}" value="{{ form.company.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border {% if form.company.errors %}border-red-500{% else %}border-gray-300{% endif %} rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    {% if form.company.errors %}<p class="text-red-600 text-xs mt-1">{{ form.company.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.location.label }}</label>
+                                    <input type="text" name="{{ form.location.name }}" value="{{ form.location.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.start_date.label }}</label>
+                                    <input type="date" name="{{ form.start_date.name }}" value="{{ form.start_date.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.end_date.label }}</label>
+                                    <input type="date" name="{{ form.end_date.name }}" value="{{ form.end_date.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    <label class="flex items-center mt-2">
+                                        <input type="checkbox" name="{{ form.current.name }}" {% if form.current.value %}checked{% endif %} 
+                                               class="mr-2">
+                                        <span class="text-sm">{{ form.current.label }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.description.label }}</label>
+                                <textarea name="{{ form.description.name }}" rows="3" 
+                                          class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">{{ form.description.value|default:'' }}</textarea>
+                            </div>
+                            {% if form.DELETE %}
+                            <label class="flex items-center text-red-600">
+                                {{ form.DELETE }}
+                                <span class="ml-2 text-sm">Supprimer</span>
+                            </label>
+                            {% endif %}
+                            {{ form.id }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-experience" class="mt-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-plus mr-1"></i>Ajouter une expérience
+                    </button>
+                </div>
+
+                <!-- Step 3: Education -->
+                <div id="step-3" class="step-content hidden">
+                    <h2 class="text-2xl font-semibold mb-6">Formation</h2>
+                    {% if education_formset.non_form_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <strong class="font-bold">Erreurs:</strong>
+                        {{ education_formset.non_form_errors }}
+                    </div>
+                    {% endif %}
+                    {{ education_formset.management_form }}
+                    <div id="education-forms">
+                        {% for form in education_formset %}
+                        <div class="formset-row">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.degree.label }}</label>
+                                    <input type="text" name="{{ form.degree.name }}" value="{{ form.degree.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border {% if form.degree.errors %}border-red-500{% else %}border-gray-300{% endif %} rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    {% if form.degree.errors %}<p class="text-red-600 text-xs mt-1">{{ form.degree.errors }}</p>{% endif %}
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.school.label }}</label>
+                                    <input type="text" name="{{ form.school.name }}" value="{{ form.school.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border {% if form.school.errors %}border-red-500{% else %}border-gray-300{% endif %} rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    {% if form.school.errors %}<p class="text-red-600 text-xs mt-1">{{ form.school.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.location.label }}</label>
+                                    <input type="text" name="{{ form.location.name }}" value="{{ form.location.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.start_date.label }}</label>
+                                    <input type="date" name="{{ form.start_date.name }}" value="{{ form.start_date.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.end_date.label }}</label>
+                                    <input type="date" name="{{ form.end_date.name }}" value="{{ form.end_date.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    <label class="flex items-center mt-2">
+                                        <input type="checkbox" name="{{ form.current.name }}" {% if form.current.value %}checked{% endif %} 
+                                               class="mr-2">
+                                        <span class="text-sm">{{ form.current.label }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.description.label }}</label>
+                                <textarea name="{{ form.description.name }}" rows="3" 
+                                          class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">{{ form.description.value|default:'' }}</textarea>
+                            </div>
+                            {% if form.DELETE %}
+                            <label class="flex items-center text-red-600">
+                                {{ form.DELETE }}
+                                <span class="ml-2 text-sm">Supprimer</span>
+                            </label>
+                            {% endif %}
+                            {{ form.id }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-education" class="mt-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-plus mr-1"></i>Ajouter une formation
+                    </button>
+                </div>
+
+                <!-- Step 4: Skills -->
+                <div id="step-4" class="step-content hidden">
+                    <h2 class="text-2xl font-semibold mb-6">Compétences</h2>
+                    {% if skill_formset.non_form_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <strong class="font-bold">Erreurs:</strong>
+                        {{ skill_formset.non_form_errors }}
+                    </div>
+                    {% endif %}
+                    {{ skill_formset.management_form }}
+                    <div id="skill-forms">
+                        {% for form in skill_formset %}
+                        <div class="formset-row">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.name.label }}</label>
+                                    <input type="text" name="{{ form.name.name }}" value="{{ form.name.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border {% if form.name.errors %}border-red-500{% else %}border-gray-300{% endif %} rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    {% if form.name.errors %}<p class="text-red-600 text-xs mt-1">{{ form.name.errors }}</p>{% endif %}
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.category.label }}</label>
+                                    <input type="text" name="{{ form.category.name }}" value="{{ form.category.value|default:'' }}" 
+                                           class="w-full px-3 py-2 bg-white border {% if form.category.errors %}border-red-500{% else %}border-gray-300{% endif %} rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    {% if form.category.errors %}<p class="text-red-600 text-xs mt-1">{{ form.category.errors }}</p>{% endif %}
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.level.label }}</label>
+                                    <input type="number" name="{{ form.level.name }}" value="{{ form.level.value|default:5 }}" min="1" max="10" 
+                                           id="level-{{ forloop.counter0 }}" 
+                                           class="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                    <input type="range" min="1" max="10" value="{{ form.level.value|default:5 }}" 
+                                           class="w-full mt-2" 
+                                           oninput="document.getElementById('level-{{ forloop.counter0 }}').value=this.value">
+                                </div>
+                            </div>
+                            {% if form.DELETE %}
+                            <label class="flex items-center text-red-600 mt-2">
+                                {{ form.DELETE }}
+                                <span class="ml-2 text-sm">Supprimer</span>
+                            </label>
+                            {% endif %}
+                            {{ form.id }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-skill" class="mt-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-plus mr-1"></i>Ajouter une compétence
+                    </button>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8 pt-6 border-t">
+                    <button type="button" id="prev-btn" class="hidden px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        <i class="fas fa-arrow-left mr-2"></i>Précédent
+                    </button>
+                    <div class="ml-auto">
+                        <button type="button" id="next-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Suivant<i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                        <button type="submit" id="save-btn" class="hidden px-6 py-2 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 text-white rounded-lg hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 disabled:opacity-50" onclick="this.disabled=true; this.innerHTML='<i class=\'fas fa-spinner fa-spin mr-2\'></i>Enregistrement...'; this.form.submit();">
+                            <i class="fas fa-save mr-2"></i>Enregistrer le CV
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+// Use Django-generated prefixes for each inline formset (more reliable than hardcoding)
+const EXPERIENCE_PREFIX = "{{ experience_formset.prefix }}";
+const EDUCATION_PREFIX = "{{ education_formset.prefix }}";
+const SKILL_PREFIX = "{{ skill_formset.prefix }}";
+
+function showStep(step) {
+    // Hide all steps
+    for (let i = 1; i <= totalSteps; i++) {
+        document.getElementById(`step-${i}`).classList.add('hidden');
+        const indicator = document.getElementById(`step-${i}-indicator`);
+        indicator.classList.remove('step-active', 'step-completed');
+        indicator.classList.add('step-pending');
+    }
+    
+    // Show current step
+    document.getElementById(`step-${step}`).classList.remove('hidden');
+    const currentIndicator = document.getElementById(`step-${step}-indicator`);
+    currentIndicator.classList.remove('step-pending');
+    currentIndicator.classList.add('step-active');
+    
+    // Mark previous steps as completed
+    for (let i = 1; i < step; i++) {
+        const indicator = document.getElementById(`step-${i}-indicator`);
+        indicator.classList.remove('step-pending', 'step-active');
+        indicator.classList.add('step-completed');
+    }
+    
+    // Update navigation buttons
+    document.getElementById('prev-btn').classList.toggle('hidden', step === 1);
+    document.getElementById('next-btn').classList.toggle('hidden', step === totalSteps);
+    document.getElementById('save-btn').classList.toggle('hidden', step !== totalSteps);
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+    }
+});
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+});
+
+// Initialize
+showStep(1);
+
+// Attach form submit handler
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('resume-form');
+    if (form) {
+        form.addEventListener('submit', saveResumeAsJSON);
+    }
+});
+
+// NEW: Save resume as JSON - much more reliable
+async function saveResumeAsJSON(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const saveBtn = document.getElementById('save-btn');
+    if (!saveBtn) {
+        console.error('Save button not found');
+        return false;
+    }
+    
+    const originalText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enregistrement...';
+    
+    try {
+        // Collect all form data
+        const formData = {
+            title: document.querySelector('[name="title"]')?.value || 'Mon CV',
+            template: document.querySelector('[name="template"]')?.value || 'modern',
+            full_name: document.querySelector('[name="full_name"]')?.value || '',
+            email: document.querySelector('[name="email"]')?.value || '',
+            phone: document.querySelector('[name="phone"]')?.value || '',
+            address: document.querySelector('[name="address"]')?.value || '',
+            linkedin: document.querySelector('[name="linkedin"]')?.value || '',
+            website: document.querySelector('[name="website"]')?.value || '',
+            summary: document.querySelector('[name="summary"]')?.value || '',
+            experiences: [],
+            educations: [],
+            skills: []
+        };
+        
+        // Collect experiences
+        document.querySelectorAll('#experience-forms .formset-row').forEach((row, index) => {
+            const jobTitle = row.querySelector('[name*="job_title"]')?.value || '';
+            const company = row.querySelector('[name*="company"]')?.value || '';
+            if (jobTitle || company) {
+                formData.experiences.push({
+                    job_title: jobTitle,
+                    company: company,
+                    location: row.querySelector('[name*="location"]')?.value || '',
+                    start_date: row.querySelector('[name*="start_date"]')?.value || '',
+                    end_date: row.querySelector('[name*="end_date"]')?.value || '',
+                    current: row.querySelector('[name*="current"]')?.checked || false,
+                    description: row.querySelector('[name*="description"]')?.value || ''
+                });
+            }
+        });
+        
+        // Collect educations
+        document.querySelectorAll('#education-forms .formset-row').forEach((row, index) => {
+            const degree = row.querySelector('[name*="degree"]')?.value || '';
+            const school = row.querySelector('[name*="school"]')?.value || '';
+            if (degree || school) {
+                formData.educations.push({
+                    degree: degree,
+                    school: school,
+                    location: row.querySelector('[name*="location"]')?.value || '',
+                    start_date: row.querySelector('[name*="start_date"]')?.value || '',
+                    end_date: row.querySelector('[name*="end_date"]')?.value || '',
+                    current: row.querySelector('[name*="current"]')?.checked || false,
+                    description: row.querySelector('[name*="description"]')?.value || ''
+                });
+            }
+        });
+        
+        // Collect skills
+        document.querySelectorAll('#skill-forms .formset-row').forEach((row, index) => {
+            const name = row.querySelector('[name*="name"]')?.value || '';
+            if (name) {
+                formData.skills.push({
+                    name: name,
+                    category: row.querySelector('[name*="category"]')?.value || '',
+                    level: parseInt(row.querySelector('[name*="level"]')?.value || '5')
+                });
+            }
+        });
+        
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]')?.value;
+        if (!csrfToken) {
+            throw new Error('CSRF token not found');
+        }
+        
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(formData)
+        });
+
+        let result = null;
+        try {
+            result = await response.json();
+        } catch (e) {
+            throw new Error('Invalid server response');
+        }
+
+        if (response.ok && result && result.success) {
+            window.location.href = `/accounts/resumes/${result.resume_id}/`;
+            return;
+        }
+
+        // Show validation errors returned by server
+        if (result && result.errors) {
+            showFormErrors(result.errors);
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+            return;
+        }
+
+        // Generic error
+        alert('Erreur: ' + (result && (result.error || result.message) ? (result.error || result.message) : 'Impossible d\'enregistrer le CV'));
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+    } catch (error) {
+        console.error('Error saving resume:', error);
+        alert('Erreur lors de l\'enregistrement: ' + error.message);
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+    }
+    
+    return false;
+}
+
+// Display server-side form errors inline
+function showFormErrors(errors) {
+    // Clear previous errors
+    document.querySelectorAll('.resume-field-error').forEach(el => el.remove());
+
+    for (const [field, msgs] of Object.entries(errors)) {
+        // Django returns lists of errors for each field; join them
+        const message = Array.isArray(msgs) ? msgs.join(' ') : String(msgs);
+
+        // Try to find input/select/textarea by name
+        const input = document.querySelector(`[name="${field}"]`) || document.querySelector(`[name*="-${field}"]`);
+        if (input) {
+            const err = document.createElement('p');
+            err.className = 'resume-field-error text-red-600 text-xs mt-1';
+            err.textContent = message;
+            input.insertAdjacentElement('afterend', err);
+        } else {
+            // General place to show non-field errors
+            const form = document.getElementById('resume-form');
+            const container = document.createElement('div');
+            container.className = 'resume-field-error bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4';
+            container.textContent = message;
+            form.prepend(container);
+        }
+    }
+}
+
+// Update all formset TOTAL_FORMS before form submission (fallback)
+function updateAllFormsetsBeforeSubmit() {
+    // Count actual forms in each formset container
+    const experienceContainer = document.getElementById('experience-forms');
+    const educationContainer = document.getElementById('education-forms');
+    const skillContainer = document.getElementById('skill-forms');
+    
+    if (experienceContainer) {
+        const expForms = experienceContainer.querySelectorAll('.formset-row');
+        setFormsetTotalForms(EXPERIENCE_PREFIX, expForms.length);
+    }
+    
+    if (educationContainer) {
+        const eduForms = educationContainer.querySelectorAll('.formset-row');
+        setFormsetTotalForms(EDUCATION_PREFIX, eduForms.length);
+    }
+    
+    if (skillContainer) {
+        const skillForms = skillContainer.querySelectorAll('.formset-row');
+        setFormsetTotalForms(SKILL_PREFIX, skillForms.length);
+    }
+    
+    // Return true to allow form submission
+    return true;
+}
+
+// Handle current checkbox for dates
+document.querySelectorAll('input[type="checkbox"][name*="current"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const endDateInput = this.closest('.formset-row').querySelector('input[type="date"][name*="end_date"]');
+        if (this.checked) {
+            endDateInput.disabled = true;
+            endDateInput.value = '';
+        } else {
+            endDateInput.disabled = false;
+        }
+    });
+    
+    // Initialize disabled state
+    if (checkbox.checked) {
+        const endDateInput = checkbox.closest('.formset-row').querySelector('input[type="date"][name*="end_date"]');
+        if (endDateInput) endDateInput.disabled = true;
+    }
+});
+
+// Formset Management Functions
+function getFormsetTotalForms(formsetPrefix) {
+    const totalFormsInput = document.getElementById(`id_${formsetPrefix}-TOTAL_FORMS`);
+    return totalFormsInput ? parseInt(totalFormsInput.value) : 0;
+}
+
+function setFormsetTotalForms(formsetPrefix, count) {
+    const totalFormsInput = document.getElementById(`id_${formsetPrefix}-TOTAL_FORMS`);
+    if (totalFormsInput) {
+        totalFormsInput.value = count;
+    } else {
+        console.error(`Could not find TOTAL_FORMS input for ${formsetPrefix}`);
+    }
+}
+
+function getFormsetMaxForms(formsetPrefix) {
+    const maxFormsInput = document.getElementById(`id_${formsetPrefix}-MAX_NUM_FORMS`);
+    return maxFormsInput ? parseInt(maxFormsInput.value) : 1000;
+}
+
+// Add Experience Form
+document.getElementById('add-experience')?.addEventListener('click', function() {
+    const formsetPrefix = EXPERIENCE_PREFIX;
+    const container = document.getElementById('experience-forms');
+    const totalForms = getFormsetTotalForms(formsetPrefix);
+    const maxForms = getFormsetMaxForms(formsetPrefix);
+    
+    if (totalForms >= maxForms) {
+        alert('Vous avez atteint le nombre maximum d\'expériences.');
+        return;
+    }
+    
+    const firstForm = container.querySelector('.formset-row');
+    if (!firstForm) return;
+    
+    const newForm = firstForm.cloneNode(true);
+    const newIndex = totalForms;
+    
+    // Clear all input values
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.type === 'checkbox') {
+            input.checked = false;
+        } else if (input.type === 'hidden' && input.name.includes('-id')) {
+            input.value = '';
+        } else if (input.type !== 'hidden') {
+            input.value = '';
+        }
+    });
+    
+    // Update field names with new index - handle both patterns: prefix-N-field and prefix-0-field
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.name) {
+            // Replace the number in the formset index position
+            const nameMatch = input.name.match(new RegExp(`^(${formsetPrefix})-\\d+-(.+)$`));
+            if (nameMatch) {
+                input.name = `${nameMatch[1]}-${newIndex}-${nameMatch[2]}`;
+            }
+            // Update ID similarly
+            if (input.id) {
+                const idMatch = input.id.match(new RegExp(`^id_(${formsetPrefix})-\\d+-(.+)$`));
+                if (idMatch) {
+                    input.id = `id_${idMatch[1]}-${newIndex}-${idMatch[2]}`;
+                } else {
+                    input.id = input.id.replace(/-\d+-/, `-${newIndex}-`);
+                }
+            }
+        }
+    });
+    
+    // Remove DELETE checkbox if it exists (for new forms)
+    const deleteCheckbox = newForm.querySelector('input[type="checkbox"][name*="DELETE"]');
+    if (deleteCheckbox) {
+        deleteCheckbox.closest('label')?.remove();
+    }
+    
+    // Remove hidden id field for new forms
+    const idInput = newForm.querySelector('input[type="hidden"][name*="-id"]');
+    if (idInput && !idInput.value) {
+        idInput.remove();
+    }
+    
+    container.appendChild(newForm);
+    setFormsetTotalForms(formsetPrefix, totalForms + 1);
+    
+    // Re-initialize current checkbox handler for new form
+    const newCheckbox = newForm.querySelector('input[type="checkbox"][name*="current"]');
+    if (newCheckbox) {
+        newCheckbox.addEventListener('change', function() {
+            const endDateInput = this.closest('.formset-row').querySelector('input[type="date"][name*="end_date"]');
+            if (this.checked) {
+                endDateInput.disabled = true;
+                endDateInput.value = '';
+            } else {
+                endDateInput.disabled = false;
+            }
+        });
+    }
+});
+
+// Add Education Form
+document.getElementById('add-education')?.addEventListener('click', function() {
+    const formsetPrefix = EDUCATION_PREFIX;
+    const container = document.getElementById('education-forms');
+    const totalForms = getFormsetTotalForms(formsetPrefix);
+    const maxForms = getFormsetMaxForms(formsetPrefix);
+    
+    if (totalForms >= maxForms) {
+        alert('Vous avez atteint le nombre maximum de formations.');
+        return;
+    }
+    
+    const firstForm = container.querySelector('.formset-row');
+    if (!firstForm) return;
+    
+    const newForm = firstForm.cloneNode(true);
+    const newIndex = totalForms;
+    
+    // Clear all input values
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.type === 'checkbox') {
+            input.checked = false;
+        } else if (input.type === 'hidden' && input.name.includes('-id')) {
+            input.value = '';
+        } else if (input.type !== 'hidden') {
+            input.value = '';
+        }
+    });
+    
+    // Update field names with new index
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.name) {
+            const nameMatch = input.name.match(new RegExp(`^(${formsetPrefix})-\\d+-(.+)$`));
+            if (nameMatch) {
+                input.name = `${nameMatch[1]}-${newIndex}-${nameMatch[2]}`;
+            }
+            if (input.id) {
+                const idMatch = input.id.match(new RegExp(`^id_(${formsetPrefix})-\\d+-(.+)$`));
+                if (idMatch) {
+                    input.id = `id_${idMatch[1]}-${newIndex}-${idMatch[2]}`;
+                } else {
+                    input.id = input.id.replace(/-\d+-/, `-${newIndex}-`);
+                }
+            }
+        }
+    });
+    
+    // Remove DELETE checkbox if it exists (for new forms)
+    const deleteCheckbox = newForm.querySelector('input[type="checkbox"][name*="DELETE"]');
+    if (deleteCheckbox) {
+        deleteCheckbox.closest('label')?.remove();
+    }
+    
+    // Remove hidden id field for new forms
+    const idInput = newForm.querySelector('input[type="hidden"][name*="-id"]');
+    if (idInput && !idInput.value) {
+        idInput.remove();
+    }
+    
+    container.appendChild(newForm);
+    setFormsetTotalForms(formsetPrefix, totalForms + 1);
+    
+    // Re-initialize current checkbox handler for new form
+    const newCheckbox = newForm.querySelector('input[type="checkbox"][name*="current"]');
+    if (newCheckbox) {
+        newCheckbox.addEventListener('change', function() {
+            const endDateInput = this.closest('.formset-row').querySelector('input[type="date"][name*="end_date"]');
+            if (this.checked) {
+                endDateInput.disabled = true;
+                endDateInput.value = '';
+            } else {
+                endDateInput.disabled = false;
+            }
+        });
+    }
+});
+
+// Add Skill Form
+document.getElementById('add-skill')?.addEventListener('click', function() {
+    const formsetPrefix = SKILL_PREFIX;
+    const container = document.getElementById('skill-forms');
+    const totalForms = getFormsetTotalForms(formsetPrefix);
+    const maxForms = getFormsetMaxForms(formsetPrefix);
+    
+    if (totalForms >= maxForms) {
+        alert('Vous avez atteint le nombre maximum de compétences.');
+        return;
+    }
+    
+    const firstForm = container.querySelector('.formset-row');
+    if (!firstForm) return;
+    
+    const newForm = firstForm.cloneNode(true);
+    const newIndex = totalForms;
+    
+    // Clear all input values
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.type === 'checkbox') {
+            input.checked = false;
+        } else if (input.type === 'hidden' && input.name.includes('-id')) {
+            input.value = '';
+        } else if (input.type === 'number' && input.name.includes('level')) {
+            input.value = '5';
+        } else if (input.type !== 'hidden') {
+            input.value = '';
+        }
+    });
+    
+    // Update field names with new index
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.name) {
+            const nameMatch = input.name.match(new RegExp(`^(${formsetPrefix})-\\d+-(.+)$`));
+            if (nameMatch) {
+                input.name = `${nameMatch[1]}-${newIndex}-${nameMatch[2]}`;
+            }
+            if (input.id) {
+                const idMatch = input.id.match(new RegExp(`^id_(${formsetPrefix})-\\d+-(.+)$`));
+                if (idMatch) {
+                    input.id = `id_${idMatch[1]}-${newIndex}-${idMatch[2]}`;
+                } else {
+                    input.id = input.id.replace(/-\d+-/, `-${newIndex}-`);
+                }
+            }
+        }
+    });
+    
+    // Update range input to sync with number input
+    const levelInput = newForm.querySelector('input[type="number"][name*="level"]');
+    const rangeInput = newForm.querySelector('input[type="range"]');
+    if (levelInput && rangeInput) {
+        const levelId = levelInput.id;
+        rangeInput.setAttribute('oninput', `document.getElementById('${levelId}').value=this.value`);
+        rangeInput.value = '5';
+    }
+    
+    // Remove DELETE checkbox if it exists (for new forms)
+    const deleteCheckbox = newForm.querySelector('input[type="checkbox"][name*="DELETE"]');
+    if (deleteCheckbox) {
+        deleteCheckbox.closest('label')?.remove();
+    }
+    
+    // Remove hidden id field for new forms
+    const idInput = newForm.querySelector('input[type="hidden"][name*="-id"]');
+    if (idInput && !idInput.value) {
+        idInput.remove();
+    }
+    
+    container.appendChild(newForm);
+    setFormsetTotalForms(formsetPrefix, totalForms + 1);
+});
+</script>
+{% endblock %}
+
