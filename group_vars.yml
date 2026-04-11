@@ -1,0 +1,7 @@
+project_dir: /opt/tunijob
+repo_url: https://github.com/badretr/tunijob.git
+django_settings_module: core.settings
+python_executable: python3
+venv_dir: /opt/tunijob/venv
+gunicorn_service_name: tunijob-gunicorn
+server_name: "_"
