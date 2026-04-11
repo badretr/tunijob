@@ -1,6 +1,10 @@
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
-ALLOWED_HOSTS = ["44.211.229.136"]
+
+# Ne pas utiliser ce fichier en production, mais si jamais il est
+# chargé comme settings Django, on accepte tous les hôtes pour éviter
+# les erreurs DisallowedHost pendant tes tests.
+ALLOWED_HOSTS = ["*"]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

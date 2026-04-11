@@ -6,13 +6,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'your-secret-key-here'
 DEBUG = True
 
-# Autoriser l'accès depuis l'adresse IP publique du serveur
-# Tu peux aussi définir la variable d'environnement DJANGO_ALLOWED_HOSTS
-# (par ex. "3.239.254.210 127.0.0.1 localhost") si tu changes d'IP plus tard.
-ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS",
-    "3.239.254.210 127.0.0.1 localhost",
-).split()
+# Pour simplifier le déploiement pendant tes tests, on accepte
+# toutes les origines. Quand tout fonctionne, tu pourras restreindre
+# à ton IP publique exacte.
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
