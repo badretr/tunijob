@@ -73,11 +73,11 @@
     - name: Reload systemd
       command: systemctl daemon-reload
 
-    - name: Enable and start gunicorn
+    - name: Restart and enable gunicorn
       systemd:
         name: "{{ gunicorn_service_name }}"
         enabled: yes
-        state: started
+        state: restarted
 
     - name: Configure Nginx
       copy:
