@@ -70,9 +70,11 @@ jobs:
           sudo apt-get install -y ansible
 
       - name: Add SSH key
+        env:
+          SSH_KEY_B64: ${{ secrets.SSH_PRIVATE_KEY_B64 }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tunijob_aws
+          echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/tunijob_aws
           chmod 600 ~/.ssh/tunijob_aws
 
       - name: Update Ansible inventory with EC2 IP
