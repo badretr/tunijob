@@ -42,7 +42,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_security_group" "tunijob_sg" {
-  name        = "tunijob-sg"
+  name_prefix        = "tunijob-sg"
   description = "Allow SSH and HTTP"
   vpc_id      = data.aws_vpc.default.id
 
