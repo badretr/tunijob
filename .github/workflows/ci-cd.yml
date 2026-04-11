@@ -50,7 +50,6 @@ jobs:
       - name: Run Ansible playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
-        # IMPORTANT : on travaille à la racine du repo
         working-directory: .
         run: |
           ansible-playbook -i hosts.ini site.yml --private-key ~/.ssh/tunijob_aws
