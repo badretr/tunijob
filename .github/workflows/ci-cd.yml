@@ -44,7 +44,11 @@ jobs:
       - name: Add SSH key
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tunijob_aws
+          chmod 600 ~/.ssh/tunijob_aws
+
+      - name: Run Ansible playbook
+        env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
-        working-directory: .
         run: |
           ansible-playbook -i hosts.ini site.yml --private-key ~/.ssh/tunijob_aws
