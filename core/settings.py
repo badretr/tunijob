@@ -83,12 +83,9 @@ LOGIN_REDIRECT_URL = 'dashboard:employer_dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
 
-SENTRY_DSN = os.getenv("SENTRY_DSN", "")
-
-if not DEBUG and SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.1,
-        send_default_pii=True,
-    )
+sentry_sdk.init(
+    dsn="https://155f1c39b97f4ee903eb363410f74aaf@o4511207565950976.ingest.us.sentry.io/4511207571980288",
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=0.1,
+    send_default_pii=True,
+)
