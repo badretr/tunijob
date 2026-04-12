@@ -6,14 +6,6 @@ terraform {
       version = "~> 5.0"
     }
   }
-
-  backend "s3" {
-    bucket         = "tunijob-terraform-state-185389968370"
-    key            = "ec2/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "tunijob-terraform-locks"
-    encrypt        = true
-  }
 }
 
 provider "aws" {
@@ -84,10 +76,6 @@ resource "aws_instance" "tunijob" {
   subnet_id              = data.aws_subnets.default.ids[0]
   vpc_security_group_ids = [aws_security_group.tunijob_sg.id]
   key_name               = var.ec2_key_name
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   tags = {
     Name = "tunijob-ec2"
