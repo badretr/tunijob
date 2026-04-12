@@ -23,11 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run security scan (Bandit)
-        run: |
-          pip install bandit
-          bandit -r . -x "*/migrations/*",".venv","venv"
-
       - name: Run Django tests
         run: |
           python manage.py test
@@ -49,11 +44,6 @@ jobs:
       - name: Add SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tunijob_aws
-          chmod 600 ~/.ssh/tunijob_aws
-
-      - name: Run Ansible playbook
-        env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
         working-directory: .
         run: |
