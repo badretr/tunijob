@@ -23,6 +23,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run security scan (Bandit)
+        run: |
+          pip install bandit
+          bandit -r . -x "*/migrations/*",".venv","venv"
+
       - name: Run Django tests
         run: |
           python manage.py test

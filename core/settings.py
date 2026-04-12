@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'your-secret-key-here'
@@ -78,3 +81,14 @@ USE_TZ = True
 
 LOGIN_REDIRECT_URL = 'dashboard:employer_dashboard'
 LOGOUT_REDIRECT_URL = 'home'
+
+
+SENTRY_DSN = os.getenv("SENTRY_DSN", "")
+
+if not DEBUG and SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.1,
+        send_default_pii=True,
+    )

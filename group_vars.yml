@@ -5,3 +5,4 @@ python_executable: python3
 venv_dir: /opt/tunijob/venv
 gunicorn_service_name: tunijob-gunicorn
 server_name: "_"
+sentry_dsn: ""

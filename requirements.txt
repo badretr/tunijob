@@ -2,3 +2,4 @@ Django
 gunicorn
 whitenoise
 pillow
+sentry-sdk[django]

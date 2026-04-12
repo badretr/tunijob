@@ -65,6 +65,7 @@
           Group=www-data
           WorkingDirectory={{ project_dir }}
           Environment="DJANGO_SETTINGS_MODULE={{ django_settings_module }}"
+          Environment="SENTRY_DSN={{ sentry_dsn | default('') }}"
           ExecStart={{ venv_dir }}/bin/gunicorn --access-logfile - --workers 3 --bind unix:{{ project_dir }}/gunicorn.sock core.wsgi:application
 
           [Install]
