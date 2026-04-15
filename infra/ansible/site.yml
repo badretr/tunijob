@@ -37,11 +37,15 @@
         group: www-data
         mode: '0664'
 
-    - name: Clean project directory except media and venv
+    - name: Clean untracked files except media and venv
       shell: |
-        find . -mindepth 1 -maxdepth 1 ! -name 'media' ! -name 'venv' -exec rm -rf {} +
+        if [ -d .git ]; then
+          git clean -fdx -e media -e venv
+          git restore .
+        fi
       args:
         chdir: /opt/tunijob
+      ignore_errors: yes
 
     - name: Clone project repo
       git:
