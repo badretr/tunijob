@@ -77,6 +77,7 @@
       args:
         chdir: "{{ project_dir }}"
 
+
     - name: Fix db.sqlite3 permissions
       file:
         path: /opt/tunijob/db.sqlite3
@@ -84,8 +85,13 @@
         group: www-data
         mode: '0664'
       ignore_errors: yes
-        version: main
+
+    - name: Clone project repo
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ project_dir }}"
         update: yes
+        version: main
 
     - name: Create virtualenv
       command: python3 -m venv "{{ venv_dir }}"
