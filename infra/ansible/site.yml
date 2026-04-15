@@ -41,8 +41,6 @@
         owner: ubuntu
         group: www-data
         mode: '0664'
-        group: ubuntu
-        mode: '0755'
 
     - name: Clone project repo
       git:
