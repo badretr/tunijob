@@ -28,10 +28,10 @@
 
 
 
-    - name: Clean untracked files except media and venv
+    - name: Clean untracked files except media, venv et db.sqlite3
       shell: |
         if [ -d .git ]; then
-          git clean -fdx -e media -e venv
+          git clean -fdx -e media -e venv -e db.sqlite3
           git restore .
         fi
       args:
