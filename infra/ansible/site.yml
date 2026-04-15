@@ -41,7 +41,7 @@
         repo: "{{ repo_url }}"
         dest: "{{ project_dir }}"
         version: main
-        force: yes
+        update: yes
 
     - name: Create virtualenv
       command: python3 -m venv "{{ venv_dir }}"
