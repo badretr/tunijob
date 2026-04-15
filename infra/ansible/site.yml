@@ -27,23 +27,6 @@
         mode: '0755'
 
 
-    # ... autres tâches ...
-
-
-
-    - name: Run migrations
-      command: "{{ venv_dir }}/bin/python manage.py migrate"
-      args:
-        chdir: "{{ project_dir }}"
-
-    - name: Fix db.sqlite3 permissions
-      file:
-        path: /opt/tunijob/db.sqlite3
-        owner: ubuntu
-        group: www-data
-        mode: '0664'
-      ignore_errors: yes
-
 
     - name: Clean untracked files except media and venv
       shell: |
@@ -76,6 +59,14 @@
       command: "{{ venv_dir }}/bin/python manage.py migrate"
       args:
         chdir: "{{ project_dir }}"
+
+    - name: Fix db.sqlite3 permissions
+      file:
+        path: /opt/tunijob/db.sqlite3
+        owner: ubuntu
+        group: www-data
+        mode: '0664'
+      ignore_errors: yes
 
 
     - name: Fix db.sqlite3 permissions
