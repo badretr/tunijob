@@ -1,10 +1,10 @@
-    - name: Fix db.sqlite3 permissions
-      file:
-        path: /opt/tunijob/db.sqlite3
-        owner: ubuntu
-        group: www-data
-        mode: '0664'
-- hosts: web
+ - hosts: web
+      - name: Fix db.sqlite3 permissions
+        file:
+          path: /opt/tunijob/db.sqlite3
+          owner: ubuntu
+          group: www-data
+          mode: '0664'
   become: yes
   vars_files:
     - group_vars.yml
