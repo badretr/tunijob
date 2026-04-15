@@ -29,12 +29,19 @@
 
     # ... autres tâches ...
 
+
     - name: Fix db.sqlite3 permissions
       file:
         path: /opt/tunijob/db.sqlite3
         owner: ubuntu
         group: www-data
         mode: '0664'
+
+    - name: Clean project directory except media and venv
+      shell: |
+        find . -mindepth 1 -maxdepth 1 ! -name 'media' ! -name 'venv' -exec rm -rf {} +
+      args:
+        chdir: /opt/tunijob
 
     - name: Clone project repo
       git:
