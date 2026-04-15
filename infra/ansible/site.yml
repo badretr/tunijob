@@ -26,12 +26,6 @@
         group: ubuntu
         mode: '0755'
 
-    - name: Clone project repo
-      git:
-        repo: "{{ repo_url }}"
-        dest: "{{ project_dir }}"
-        version: main
-        force: yes
 
     # ... autres tâches ...
 
