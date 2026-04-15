@@ -7,7 +7,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'your-secret-key-here'
-DEBUG = True
+DEBUG = False
 
 # Pour simplifier le déploiement pendant tes tests, on accepte
 # toutes les origines. Quand tout fonctionne, tu pourras restreindre
