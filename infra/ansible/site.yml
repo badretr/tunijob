@@ -81,22 +81,34 @@
 
     - name: Configure Nginx
       copy:
-        dest: /etc/nginx/sites-available/tunijob
-        content: |
-          server {
-              listen 80;
-              server_name {{ server_name }};
+      dest: /etc/nginx/sites-available/tunijob
+      content: |
+        server {
+          listen 80;
+          server_name {{ server_name }};
+          return 301 https://$host$request_uri;
+        }
 
-              location = /favicon.ico { access_log off; log_not_found off; }
-              location /static/ {
-                  alias {{ project_dir }}/staticfiles/;
-              }
+        server {
+          listen 443 ssl;
+          server_name {{ server_name }};
 
-              location / {
-                  include proxy_params;
-                  proxy_pass http://unix:{{ project_dir }}/gunicorn.sock;
-              }
+          ssl_certificate /etc/letsencrypt/live/tunijob.me/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/tunijob.me/privkey.pem;
+
+          ssl_protocols TLSv1.2 TLSv1.3;
+          ssl_ciphers HIGH:!aNULL:!MD5;
+
+          location = /favicon.ico { access_log off; log_not_found off; }
+          location /static/ {
+            alias {{ project_dir }}/staticfiles/;
           }
+
+          location / {
+            include proxy_params;
+            proxy_pass http://unix:{{ project_dir }}/gunicorn.sock;
+          }
+        }
 
     - name: Enable Nginx site
       file:
