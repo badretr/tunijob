@@ -89,6 +89,9 @@ def employer_profile(request):
 @ensure_csrf_cookie
 def login_view(request):
     if request.method == 'POST':
+        print("POST:", request.POST)
+        print("BODY:", request.body)
+        print("CONTENT_TYPE:", request.content_type)
         username_or_email = request.POST.get('username_or_email')
         password = request.POST.get('password')
         user_type = request.POST.get('user_type', 'job_seeker')
