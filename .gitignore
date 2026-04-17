@@ -1,3 +1,9 @@
+# Fichiers volumineux et inutiles
+db.sqlite3
+venv/
+infra/terraform/.terraform/
+*.pyc
+__pycache__/
 # Python
 *.py[cod]
 __pycache__/
@@ -22,7 +28,7 @@ var/
 # Django
 *.log
 local_settings.py
-# db.sqlite3
+db.sqlite3
 db.sqlite3-journal
 media/
 static/
