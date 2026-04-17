@@ -88,6 +88,7 @@ def employer_profile(request):
 
 @ensure_csrf_cookie
 def login_view(request):
+        # Patch: modification mineure pour forcer un nouveau commit/push
     if request.method == 'POST':
         print("POST:", request.POST)
         print("BODY:", request.body)
