@@ -92,13 +92,24 @@ def login_view(request):
         print("POST:", request.POST)
         print("BODY:", request.body)
         print("CONTENT_TYPE:", request.content_type)
-        username_or_email = request.POST.get('username_or_email')
-        password = request.POST.get('password')
-        user_type = request.POST.get('user_type', 'job_seeker')
+
+        # Support JSON and form-urlencoded
+        if request.content_type.startswith('application/json'):
+            try:
+                data = json.loads(request.body)
+            except Exception:
+                data = {}
+            username_or_email = data.get('username_or_email', '').strip().lower()
+            password = data.get('password', '').strip()
+            user_type = data.get('user_type', 'job_seeker')
+        else:
+            username_or_email = request.POST.get('username_or_email', '').strip().lower()
+            password = request.POST.get('password', '').strip()
+            user_type = request.POST.get('user_type', 'job_seeker')
 
         try:
             user = CustomUser.objects.get(
-                Q(username=username_or_email) | Q(email=username_or_email)
+                Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email)
             )
             if user_type == 'job_seeker' and not user.is_job_seeker:
                 messages.error(request, "Veuillez sélectionner le bon type d'utilisateur (Candidat).")
