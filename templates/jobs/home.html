@@ -10,14 +10,16 @@
         .hero-section {
             background-color: #0b1220;
             color: #e2e8f0;
-            padding: 5rem 0 4rem;
+            padding: 5rem 0 0rem;
             text-align: left;
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            min-height: 90vh;
+            min-height: 100vh;
+            margin-top: 0;
+            padding-top: 0;
         }
 
         /* Photo layer */
@@ -28,14 +30,14 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(120deg, rgba(11, 18, 32, 0.6), rgba(22, 28, 45, 0.55)), url("{% static 'images/home-hero-bg.png' %}");
+            background: linear-gradient(120deg, rgba(11, 18, 32, 0.55), rgba(22, 28, 45, 0.45)), url("{% static 'images/IMG_8082.jpeg' %}");
             background-size: cover;
-            background-position: center center;
+            background-position: center top;
             background-repeat: no-repeat;
             opacity: 1;
-            filter: blur(5px);
+            filter: brightness(1.25) blur(4px);
             z-index: 0;
-            transform: scale(1.05);
+            transform: none;
         }
 
         /* Subtle animated glow overlay */
@@ -296,9 +298,11 @@
     </section>
 
     <!-- Additional Sections -->
-    {% include 'jobs/sections/featured_jobs.html' %}
-    {% include 'jobs/sections/categories.html' %}
-    {% include 'jobs/sections/how_it_works.html' %}
+    <div style="margin-top:0;padding-top:0;">
+        {% include 'jobs/sections/featured_jobs.html' %}
+        {% include 'jobs/sections/categories.html' %}
+        {% include 'jobs/sections/how_it_works.html' %}
+    </div>
 </main>
 <!-- TEST: Changement pour déclencher le workflow CI/CD -->
 {% endblock %}

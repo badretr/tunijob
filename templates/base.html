@@ -13,23 +13,21 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50">
-    {% include 'includes/header.html' %}
-    
-    {% if messages %}
-    <div class="pt-16">
-        {% for message in messages %}
-        <div class="bg-{{ message.tags }}-100 border-l-4 border-{{ message.tags }}-500 text-{{ message.tags }}-700 p-4" role="alert">
-            <p>{{ message }}</p>
+    <div style="margin:0;padding:0;">
+        {% include 'includes/header.html' %}
+        {% if messages %}
+        <div class="pt-16">
+            {% for message in messages %}
+            <div class="bg-{{ message.tags }}-100 border-l-4 border-{{ message.tags }}-500 text-{{ message.tags }}-700 p-4" role="alert">
+                <p>{{ message }}</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+        {% include 'includes/footer.html' %}
+        {% include 'includes/message_popup.html' %}
+        {% block extra_js %}{% endblock %}
     </div>
-    {% endif %}
-
-    {% block content %}{% endblock %}
-    
-    {% include 'includes/footer.html' %}
-    {% include 'includes/message_popup.html' %}
-    
-    {% block extra_js %}{% endblock %}
 </body>
 </html> 
